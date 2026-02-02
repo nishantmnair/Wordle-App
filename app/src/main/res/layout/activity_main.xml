@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="#6200EE"
+        android:padding="16dp"
+        android:text="Wordle"
+        android:textColor="@android:color/white"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_streak"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:text="Streak: 0"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@id/sw_nature"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/sw_nature" />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/sw_nature"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:text="Nature Mode"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_title" />
+
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:padding="16dp"
+        app:layout_constraintBottom_toTopOf="@+id/targetWord"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/sw_nature">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Guess 1 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingBottom="8dp">
+
+                <TextView
+                    android:id="@+id/guess1Label"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Guess #1"
+                    android:textColor="#757575"
+                    android:textSize="24sp" />
+
+                <TextView
+                    android:id="@+id/guess1Value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#757575"
+                    android:textSize="24sp"
+                    tools:text="CATS" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingBottom="16dp">
+
+                <TextView
+                    android:id="@+id/guess1CheckLabel"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Guess #1 Check"
+                    android:textColor="#757575"
+                    android:textSize="24sp" />
+
+                <TextView
+                    android:id="@+id/guess1CheckValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="24sp"
+                    tools:text="CATS" />
+            </LinearLayout>
+
+            <!-- Guess 2 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingBottom="8dp">
+
+                <TextView
+                    android:id="@+id/guess2Label"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Guess #2"
+                    android:textColor="#757575"
+                    android:textSize="24sp" />
+
+                <TextView
+                    android:id="@+id/guess2Value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#757575"
+                    android:textSize="24sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingBottom="16dp">
+
+                <TextView
+                    android:id="@+id/guess2CheckLabel"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Guess #2 Check"
+                    android:textColor="#757575"
+                    android:textSize="24sp" />
+
+                <TextView
+                    android:id="@+id/guess2CheckValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="24sp" />
+            </LinearLayout>
+
+            <!-- Guess 3 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingBottom="8dp">
+
+                <TextView
+                    android:id="@+id/guess3Label"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Guess #3"
+                    android:textColor="#757575"
+                    android:textSize="24sp" />
+
+                <TextView
+                    android:id="@+id/guess3Value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#757575"
+                    android:textSize="24sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingBottom="16dp">
+
+                <TextView
+                    android:id="@+id/guess3CheckLabel"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Guess #3 Check"
+                    android:textColor="#757575"
+                    android:textSize="24sp" />
+
+                <TextView
+                    android:id="@+id/guess3CheckValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="24sp" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+    <TextView
+        android:id="@+id/targetWord"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:textColor="#757575"
+        android:textSize="60sp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_bar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="STAR"
+        tools:visibility="visible" />
+
+    <ImageView
+        android:id="@+id/iv_star"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:src="@drawable/ic_star"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/targetWord"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/bottom_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#EEEEEE"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="8dp"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <EditText
+            android:id="@+id/et_guess"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:hint="Enter 4 letter guess here"
+            android:imeOptions="actionDone"
+            android:inputType="textCapCharacters"
+            android:maxLength="4"
+            android:padding="12dp"
+            android:textSize="20sp" />
+
+        <Button
+            android:id="@+id/btn_reset"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#6200EE"
+            android:text="RESTART"
+            android:textColor="@android:color/white"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
