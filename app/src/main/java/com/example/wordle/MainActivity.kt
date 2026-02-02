@@ -27,6 +27,7 @@ class MainActivity : AppCompatActivity() {
     private var guessCount = 0
     private var streak = 0
     private var isGameOver = false
+    private var isSubmitting = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,49 +51,52 @@ class MainActivity : AppCompatActivity() {
         val guess3CheckValue = findViewById<TextView>(R.id.guess3CheckValue)
 
         natureSwitch.setOnCheckedChangeListener { _, isChecked ->
-            // Only allow changing theme if no guesses have been made
             if (guessCount == 0 && !isGameOver) {
                 wordToGuess = FourLetterWordList.getRandomFourLetterWord(isChecked)
             }
         }
 
         fun submitGuess() {
-            if (isGameOver || guessCount >= 3) return
+            // Debounce check: prevent double triggers within 500ms
+            if (isGameOver || guessCount >= 3 || isSubmitting) return
 
-            val guess = guessEditText.text.toString().uppercase().trim()
-            
-            if (guess.length != 4) {
+            val rawInput = guessEditText.text.toString().uppercase().trim()
+            if (rawInput.isEmpty()) return
+
+            if (rawInput.length != 4) {
                 Toast.makeText(this, "Please enter exactly 4 letters", Toast.LENGTH_SHORT).show()
                 return
             }
 
-            if (!guess.all { it.isLetter() }) {
+            if (!rawInput.all { it.isLetter() }) {
                 Toast.makeText(this, "Please enter only alphabetical characters (A-Z)", Toast.LENGTH_SHORT).show()
                 return
             }
 
-            // Disable theme switching once a guess is made
+            // Start submission processing
+            isSubmitting = true
+            guessEditText.text.clear()
             natureSwitch.isEnabled = false
-
             guessCount++
-            val coloredCheck = getColoredCheck(guess)
+            
+            val coloredCheck = getColoredCheck(rawInput)
 
             when (guessCount) {
                 1 -> {
-                    guess1Value.text = guess
+                    guess1Value.text = rawInput
                     guess1CheckValue.text = coloredCheck
                 }
                 2 -> {
-                    guess2Value.text = guess
+                    guess2Value.text = rawInput
                     guess2CheckValue.text = coloredCheck
                 }
                 3 -> {
-                    guess3Value.text = guess
+                    guess3Value.text = rawInput
                     guess3CheckValue.text = coloredCheck
                 }
             }
 
-            if (guess == wordToGuess) {
+            if (rawInput == wordToGuess) {
                 isGameOver = true
                 streak++
                 streakTextView.text = "Streak: $streak"
@@ -103,8 +107,9 @@ class MainActivity : AppCompatActivity() {
                 streakTextView.text = "Streak: $streak"
                 showLossUI(guessEditText, targetWordTextView)
             }
-            
-            guessEditText.text.clear()
+
+            // Reset the submission flag after a small delay to prevent rapid double-clicks
+            guessEditText.postDelayed({ isSubmitting = false }, 500)
         }
 
         guessEditText.setOnEditorActionListener { _, actionId, event ->
@@ -118,13 +123,12 @@ class MainActivity : AppCompatActivity() {
         }
 
         resetButton.setOnClickListener {
-            // Reset game state
             guessCount = 0
             isGameOver = false
+            isSubmitting = false
             natureSwitch.isEnabled = true
             wordToGuess = FourLetterWordList.getRandomFourLetterWord(natureSwitch.isChecked)
             
-            // Clear UI
             guess1Value.text = ""
             guess1CheckValue.text = ""
             guess2Value.text = ""
@@ -136,28 +140,19 @@ class MainActivity : AppCompatActivity() {
             targetWordTextView.visibility = View.GONE
             starImageView.visibility = View.GONE
             
-            // Re-enable inputs
             guessEditText.isEnabled = true
-            
             Toast.makeText(this, "Game Restarted!", Toast.LENGTH_SHORT).show()
         }
     }
 
-    private fun showWinUI(
-        et: EditText, 
-        targetTv: TextView, 
-        starIv: ImageView,
-        root: ConstraintLayout
-    ) {
+    private fun showWinUI(et: EditText, targetTv: TextView, starIv: ImageView, root: ConstraintLayout) {
         targetTv.text = wordToGuess
         targetTv.visibility = View.VISIBLE
         et.isEnabled = false
-        
         starIv.visibility = View.VISIBLE
         starIv.alpha = 0f
         starIv.scaleX = 0f
         starIv.scaleY = 0f
-        
         starIv.animate()
             .alpha(1f)
             .scaleX(1.5f)
@@ -169,30 +164,24 @@ class MainActivity : AppCompatActivity() {
                 triggerConfetti(root)
             }
             .start()
-
         Toast.makeText(this, "Congratulations!", Toast.LENGTH_SHORT).show()
     }
 
     private fun triggerConfetti(root: ConstraintLayout) {
         val random = Random()
         val colors = intArrayOf(Color.RED, Color.BLUE, Color.GREEN, Color.YELLOW, Color.MAGENTA, Color.CYAN)
-        
         for (i in 0..50) {
             val confettiPiece = View(this)
             val size = random.nextInt(20) + 10
             confettiPiece.layoutParams = ViewGroup.LayoutParams(size, size)
             confettiPiece.setBackgroundColor(colors[random.nextInt(colors.size)])
-            
             confettiPiece.x = random.nextInt(root.width.coerceAtLeast(1)).toFloat()
             confettiPiece.y = -50f
-            
             root.addView(confettiPiece)
-            
             val duration = random.nextInt(2000) + 2000L
             val fallAnim = ObjectAnimator.ofFloat(confettiPiece, "translationY", root.height.toFloat() + 50f)
             val rotationAnim = ObjectAnimator.ofFloat(confettiPiece, "rotation", random.nextInt(360).toFloat(), random.nextInt(720).toFloat())
             val xAnim = ObjectAnimator.ofFloat(confettiPiece, "translationX", confettiPiece.x + random.nextInt(200) - 100)
-            
             val animSet = AnimatorSet()
             animSet.playTogether(fallAnim, rotationAnim, xAnim)
             animSet.duration = duration
@@ -217,35 +206,24 @@ class MainActivity : AppCompatActivity() {
         for (char in wordToGuess) {
             targetLettersCount[char] = targetLettersCount.getOrDefault(char, 0) + 1
         }
-
-        val styles = IntArray(4) { Color.RED } // Default to Red for no match
-
-        // First pass: Find correct positions (Green)
+        val styles = IntArray(4) { Color.RED }
         for (i in 0..3) {
             if (guess[i] == wordToGuess[i]) {
                 styles[i] = Color.GREEN
                 targetLettersCount[guess[i]] = targetLettersCount[guess[i]]!! - 1
             }
         }
-
-        // Second pass: Find correct letters in wrong positions (Orange)
         for (i in 0..3) {
             if (styles[i] != Color.GREEN) {
                 val count = targetLettersCount.getOrDefault(guess[i], 0)
                 if (count > 0) {
-                    styles[i] = Color.parseColor("#FFA500") // Orange
+                    styles[i] = Color.parseColor("#FFA500")
                     targetLettersCount[guess[i]] = count - 1
                 }
             }
         }
-
         for (i in 0..3) {
-            spannable.setSpan(
-                ForegroundColorSpan(styles[i]),
-                i,
-                i + 1,
-                SpannableStringBuilder.SPAN_EXCLUSIVE_EXCLUSIVE
-            )
+            spannable.setSpan(ForegroundColorSpan(styles[i]), i, i + 1, SpannableStringBuilder.SPAN_EXCLUSIVE_EXCLUSIVE)
         }
         return spannable
     }
