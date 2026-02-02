@@ -57,7 +57,6 @@ class MainActivity : AppCompatActivity() {
         }
 
         fun submitGuess() {
-            // Debounce check: prevent double triggers within 500ms
             if (isGameOver || guessCount >= 3 || isSubmitting) return
 
             val rawInput = guessEditText.text.toString().uppercase().trim()
@@ -73,7 +72,6 @@ class MainActivity : AppCompatActivity() {
                 return
             }
 
-            // Start submission processing
             isSubmitting = true
             guessEditText.text.clear()
             natureSwitch.isEnabled = false
@@ -108,7 +106,6 @@ class MainActivity : AppCompatActivity() {
                 showLossUI(guessEditText, targetWordTextView)
             }
 
-            // Reset the submission flag after a small delay to prevent rapid double-clicks
             guessEditText.postDelayed({ isSubmitting = false }, 500)
         }
 
